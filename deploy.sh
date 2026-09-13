@@ -181,3 +181,38 @@ fi
 
 echo "PostgreSQL configuration completed."
 
+# ============================================================
+# 7. Start FastAPI / Uvicorn
+# ============================================================
+
+echo ""
+echo "[7/8] Starting FastAPI application..."
+
+# Stop the previous TaskBoard process if its PID file exists.
+if [ -f "$PID_FILE" ]; then
+    OLD_PID="$(cat "$PID_FILE")"
+
+    if kill -0 "$OLD_PID" >/dev/null 2>&1; then
+        echo "Stopping previous TaskBoard process (PID: $OLD_PID)..."
+        kill "$OLD_PID"
+        sleep 1
+    fi
+
+    rm -f "$PID_FILE"
+fi
+
+echo "Starting Uvicorn..."
+
+nohup "$APP_DIR/$VENV_DIR/bin/uvicorn" \
+    app.main:app \
+    --host "$APP_HOST" \
+    --port "$APP_PORT" \
+    > "$LOG_FILE" 2>&1 &
+
+UVICORN_PID=$!
+
+echo "$UVICORN_PID" > "$PID_FILE"
+
+echo "Uvicorn started."
+echo "PID: $UVICORN_PID"
+echo "Log: $LOG_FILE"
