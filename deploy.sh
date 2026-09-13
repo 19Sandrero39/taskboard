@@ -216,3 +216,42 @@ echo "$UVICORN_PID" > "$PID_FILE"
 echo "Uvicorn started."
 echo "PID: $UVICORN_PID"
 echo "Log: $LOG_FILE"
+
+# ============================================================
+# 8. Health check
+# ============================================================
+
+echo ""
+echo "[8/8] Checking application health..."
+
+HEALTH_URL="http://localhost:$APP_PORT/api/health"
+
+echo "Waiting for application to start..."
+sleep 3
+
+if curl -s -f "$HEALTH_URL" > /dev/null; then
+    echo ""
+    echo "========================================"
+    echo " TaskBoard deployed successfully!"
+    echo "========================================"
+    echo ""
+    echo "Application: http://localhost:$APP_PORT/"
+    echo "API docs:    http://localhost:$APP_PORT/docs"
+    echo "Health:      $HEALTH_URL"
+    echo ""
+    echo "Uvicorn PID: $UVICORN_PID"
+    echo "Log file:    $LOG_FILE"
+else
+    echo ""
+    echo "========================================"
+    echo " ERROR: TaskBoard failed to start!"
+    echo "========================================"
+    echo ""
+    echo "Uvicorn log:"
+    echo "----------------------------------------"
+
+    cat "$LOG_FILE"
+
+    echo "----------------------------------------"
+    exit 1
+fi
