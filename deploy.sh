@@ -99,3 +99,17 @@ if [ ! -f "requirements.txt" ]; then
 fi
 
 echo "Project directory: $APP_DIR"
+
+# ============================================================
+# 3. Create Python virtual environment
+# ============================================================
+
+echo ""
+echo "[3/8] Checking Python virtual environment..."
+
+if [ ! -d "$VENV_DIR" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv "$VENV_DIR"
+else
+    echo "Virtual environment already exists."
+fi
