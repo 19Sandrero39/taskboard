@@ -68,3 +68,34 @@ if [ -n "$PACKAGES" ]; then
 else
     echo "All required system programs are already installed."
 fi
+
+# ============================================================
+# 2. Check project directory
+# ============================================================
+
+echo ""
+echo "[2/8] Checking project directory..."
+
+if [ ! -f "requirements.txt" ]; then
+    echo "requirements.txt was not found."
+
+    if [ -d "$APP_NAME" ]; then
+        echo "Found existing $APP_NAME directory."
+        cd "$APP_NAME"
+        APP_DIR="$(pwd)"
+    else
+        echo "Cloning TaskBoard repository..."
+        git clone "$REPOSITORY_URL" "$APP_NAME"
+        cd "$APP_NAME"
+        APP_DIR="$(pwd)"
+    fi
+else
+    echo "TaskBoard project already exists."
+fi
+
+if [ ! -f "requirements.txt" ]; then
+    echo "ERROR: requirements.txt is still missing."
+    exit 1
+fi
+
+echo "Project directory: $APP_DIR"
