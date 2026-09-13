@@ -127,3 +127,25 @@ echo "[4/8] Installing Python dependencies..."
 
 echo "Python dependencies installed."
 
+# ============================================================
+# 5. Start PostgreSQL
+# ============================================================
+
+echo ""
+echo "[5/8] Checking PostgreSQL..."
+
+if ! sudo systemctl is-active --quiet postgresql; then
+    echo "PostgreSQL is not running. Starting PostgreSQL..."
+    sudo systemctl start postgresql
+else
+    echo "PostgreSQL is already running."
+fi
+
+# Check that PostgreSQL accepts connections.
+if ! sudo -u postgres pg_isready >/dev/null 2>&1; then
+    echo "ERROR: PostgreSQL is not ready."
+    exit 1
+fi
+
+echo "PostgreSQL is ready."
+
