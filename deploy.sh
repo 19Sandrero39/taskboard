@@ -149,3 +149,35 @@ fi
 
 echo "PostgreSQL is ready."
 
+# ============================================================
+# 6. Create database and user
+# ============================================================
+
+echo ""
+echo "[6/8] Configuring PostgreSQL database..."
+
+# Check whether the PostgreSQL user exists.
+if sudo -u postgres psql -tAc \
+    "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'" | grep -q 1; then
+
+    echo "PostgreSQL user '$DB_USER' already exists."
+else
+    echo "Creating PostgreSQL user '$DB_USER'..."
+
+    sudo -u postgres psql -v ON_ERROR_STOP=1 -c \
+        "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+fi
+
+# Check whether the database exists.
+if sudo -u postgres psql -tAc \
+    "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" | grep -q 1; then
+
+    echo "Database '$DB_NAME' already exists."
+else
+    echo "Creating database '$DB_NAME'..."
+
+    sudo -u postgres createdb -O "$DB_USER" "$DB_NAME"
+fi
+
+echo "PostgreSQL configuration completed."
+
